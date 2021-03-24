@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import {CurrentWeather} from './CurrentWeather'
+import {ForecastWeather} from './ForecastWeather'
 import {CityExist} from '../functions/CityExist'
 import {ApiWeather} from '../functions/ApiWeather'
 import {ApiOneCall} from '../functions/ApiOneCall'
@@ -12,19 +13,7 @@ export const Search = () => {
 
     const canShowWeather = weather !== undefined && location !== undefined && location.coord !== undefined
 
-    const autoSearchWeather = async () => {
-        if(CityExist(searchLocation.current.value)){
-            const autoLocationResult = await ApiWeather(searchLocation.current.value)
-            setLocation(autoLocationResult)
-
-            if(autoLocationResult.coord !== undefined){
-                const autoWeatherResult = await ApiOneCall(autoLocationResult.coord.lon, autoLocationResult.coord.lat)
-                setWeather(autoWeatherResult)
-            }
-        }
-    }
-
-    const searchWeather = async () => {
+    const callApi = async () => {
         const locationResult = await ApiWeather(searchLocation.current.value)
         setLocation(locationResult)
 
@@ -34,10 +23,23 @@ export const Search = () => {
         }
     }
 
+    const autoSearchWeather = () => {
+        if(CityExist(searchLocation.current.value)){
+            callApi()
+        }
+    }
+
+    const manualSearchWeather = () => {
+        callApi()
+    }
+
     let weatherData
     if(canShowWeather){
         weatherData = (
-            <CurrentWeather location = {location} weather = {weather} />
+            <>
+                <CurrentWeather location = {location} weather = {weather} />
+                <ForecastWeather weather = {weather} />
+            </>
         )
     }
     
@@ -45,7 +47,7 @@ export const Search = () => {
         <>
             <label>Search city</label><br/>
             <input type="text" ref={searchLocation} onKeyUp={autoSearchWeather}/>
-            <button onClick={searchWeather}>Force Search</button>
+            <button onClick={manualSearchWeather}>Manual Search</button>
             {weatherData}
         </>
     )
