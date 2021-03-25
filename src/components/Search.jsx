@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {CurrentWeather} from './CurrentWeather'
 import {ForecastWeather} from './ForecastWeather'
+import {NoData} from './NoData'
 import {CityExist} from '../functions/CityExist'
 import {ApiWeather} from '../functions/ApiWeather'
 import {ApiOneCall} from '../functions/ApiOneCall'
@@ -53,11 +54,17 @@ export const Search = () => {
             </>
         )
     }
+    else{
+        weatherData = (
+            <>
+                <NoData />
+            </>
+        )
+    }
     
     return (
         <>
-            <label>Search city</label><br/>
-            <input type="text" ref={searchLocation} onKeyUp={autoSearchWeather}/>
+            <input type="text" ref={searchLocation} placeholder="Search city" onKeyUp={autoSearchWeather}/>
             <button onClick={manualSearchWeather}>Manual Search</button>
             {weatherData}
         </>
